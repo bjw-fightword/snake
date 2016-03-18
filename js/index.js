@@ -1,96 +1,131 @@
-$(function(){
-	var s ='';
-	for(var i=0;i<20;i++){
-		for(var j=0;j<20;j++){
-			var id=i+'_'+j;
-			s+='<div id="'+id+'" class="block"></div>'
-		}
-	}
-	$('#sence').html(s);
-	var snake=[{x:0,y:0},{x:0,y:1},{x:0,y:2}];
-	var data={'0_0':true,'0_1':true,'0_2':true}
-	var huashe=function(){
-		$.each(snake,function(index,value){
-			$('#'+value.x+'_'+value.y).css({background:'red'});
-		})
-	}
-	huashe();
-	var dropFood=function(){
-		var x=Math.floor(Math.random()*20);
-		var y=Math.floor(Math.random()*20);
-		while(data[x+'_'+y]){
-			x=Math.floor(Math.random()*20);
-			y=Math.floor(Math.random()*20);
-		}
-		$('#'+x+'_'+y).css({background:"green"});
-		return {x:x,y:y};
-	}
-	var food=dropFood();
-	var fangxiang=39;
-	var move=function(){
-		var oldTou=snake[snake.length-1];
-		if(fangxiang==39){
-			var newTou={x:oldTou.x,y:oldTou.y+1};
-		}
-		if(fangxiang==40){
-			var newTou={x:oldTou.x+1,y:oldTou.y};
-		}
-		if(fangxiang==37){
-			var newTou={x:oldTou.x,y:oldTou.y-1};
-		}
-		if(fangxiang==38){
-			var newTou={x:oldTou.x-1,y:oldTou.y};
-		}
-		if(newTou.x<0||newTou.y<0||newTou.x>19||newTou.y>19||data[newTou.x+'_'+newTou.y]){
-			gameover.style.display="block";
-			stop.style.display='none';
-			/*alert("游戏结束")*/
-			clearInterval(t);
-			return;
-		}
-		if(newTou.x==food.x&&newTou.y==food.y){
-			food=dropFood();
-		}else{
-			var weiba=snake.shift();
-			delete data[weiba.x+'_'+weiba.y];
-			$('#'+weiba.x+'_'+weiba.y).css({background:'rgba(0,0,0,0.5)'});
-		}
-		snake.push(newTou);
-		data[newTou.x + '_' + newTou.y] = true;
-		$('#'+newTou.x+'_'+newTou.y).css({background:'red'});
-	}
+(function($){
+  $.fn.extend({
+    snake:function(){
+      var
+      row = 20,
+      tmplate = '<div class="block"></div>';
 
-	var str=document.querySelector('.starts');
-	var stop=document.querySelector('.stop');
-	var gameover=document.querySelector('.gameover');
-	str.onclick=function(){
-		stop.style.display='block';
-		str.style.display='none';
-		gameover.style.display="none";
-		t=setInterval(move,200);
-		
-	}
-	stop.onclick=function(){
-		clearInterval(t);
-		str.style.display='block';
-		stop.style.display='none';
-	}
-	gameover.onclick=function(){
-		str.style.display='block';
-		gameover.style.display="none";
-		window.location.reload();
-		stop.style.display='none';
+      for (var i = 0,html=''; i < row*row; i++) {
+        html += tmplate;
+      }
+      $(this).html(html);
 
-	}
-	$(document).keydown(function(e){
-		if(Math.abs(e.keyCode-fangxiang)==2){
-			return;
-		}
-		if(!(e.keyCode>=37&&e.keyCode<=40)){
-			return;
-		}
-		fangxiang=e.keyCode;
-	})
+      var blocks = $('#snake .block');
+      var pos2el = function (pos) {
+        var index = pos.x * row + pos.y;
+        return blocks.eq(index);
+      }
 
-	
-})
+      var snake = [ {x:0,y:0},{x:0,y:1},{x:0,y:2} ];
+      var map   = {'0-0':true,'0-1':true,'0-2':true};
+      snake.forEach(function (v) {
+        pos2el(v).addClass('snake');
+      })
+
+      var dropFood = function() {
+        var pos = {}
+        do{
+          pos.x = Math.floor( Math.random()*row );
+          pos.y = Math.floor( Math.random()*row );
+        }
+        while( map[ pos.x + '-' + pos.y ] );
+
+        pos2el(pos).addClass('food');
+
+        return pos;
+      }
+      var food = dropFood();
+
+
+      var R = 'right', L = 'left', U = 'up', D = 'down';
+      var direct =  R;
+
+      var move = function () {
+        var od = snake[ snake.length - 1 ],nw;
+        switch (direct) {
+          case R:
+            nw = { x : od.x , y : od.y + 1 }; break;
+          case L:
+            nw = { x : od.x , y : od.y - 1 }; break;
+          case U:
+            nw = { y : od.y , x : od.x - 1 }; break;
+          case D:
+            nw = { y : od.y , x : od.x + 1 }; break;
+          default:
+          return;
+        }
+
+        if( nw.x < 0  || nw.y < 0  ||
+            nw.x > 19 || nw.y > 19 ||
+            map[ nw.x + '-' + nw.y ]
+          )
+        {
+          gameover.style.display="block";
+          stop.style.display='none';
+          clearInterval(t);
+          return;
+        }
+
+        if( nw.x === food.x && nw.y === food.y ){
+          food = dropFood();
+          pos2el(nw).removeClass('food');
+        }else{
+          var tail = snake.shift();
+          delete map[ tail.x + '-' + tail.y ];
+          pos2el(tail).removeClass('snake');
+        }
+
+        snake.push(nw)
+        map[ nw.x + '-' + nw.y ] = true;
+        pos2el(nw).addClass('snake');
+
+      }
+      var str=document.querySelector('.starts');
+      var stop=document.querySelector('.stop');
+      var gameover=document.querySelector('.gameover');
+  str.onclick=function(){
+    stop.style.display='block';
+    str.style.display='none';
+    gameover.style.display="none";
+    t=setInterval(move,200); 
+  }
+  stop.onclick=function(){
+    clearInterval(t);
+    str.style.display='block';
+    stop.style.display='none';
+  }
+  gameover.onclick=function(){
+    str.style.display='block';
+    gameover.style.display="none";
+    window.location.reload();
+    stop.style.display='none';
+
+  }
+
+
+
+
+      $( document ).keydown( function( e ){
+        e.preventDefault();
+        var dir2num = { 'right':39 , 'left':37 , 'up':38, 'down':40 };
+        var num2dir = { 39:'right' , 37:'left' , 38:'up', 40:'down' };
+        if( Math.abs( e.keyCode - dir2num[ direct ] ) === 2 ){
+          return;
+        }
+        if( !( e.keyCode >= 37 && e.keyCode <= 40 ) ){
+          return;
+        }
+        direct = num2dir[e.keyCode];
+      })
+    
+
+      touch.on( '#snake' ,'swipe', function(e){
+        e.preventDefault();
+        if(e.direction){
+          direct =  e.direction;
+        }
+      })
+
+    }
+  })
+})(jQuery)

@@ -1,19 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>贪吃蛇</title>
-	
-	
-	<script src="./js/jquery-1-12-1.js"></script>
-	<script src="./js/index.js"></script>
-	
-
-	<link rel="stylesheet" href="./css/index.css">
+  <title>贪吃蛇</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="css/index.css">
+  <script src="js/jQuery.js"></script>
+  <script src="js/touch-0.2.14.min.js"></script>
+  <script src="js/index.js"></script>
+ 
 </head>
 <body>
-<div id="sence"></div>
-	<div class="starts">
+  <div id="snake"></div>
+  <div class="starts">
 		开始
 	</div>
 	<div class="stop">
@@ -23,65 +22,8 @@
 		游戏结束
 	</div>
 </body>
+<script type="text/javascript">
+  $('#snake').snake();
+</script>
 </html>
-<script src="./js/js.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- javascript实现继承的方式 
-	var a ={
-	henbang1:1
-	henhang2:f
-	}
-var b=Object.create(a);
-继承a的方法
-	b.henbang3:f
-	b.henbang4:f
-
-var c =Object.create(b);
-继承b的方法
-
-
-
-
-
-
-
-
-
-var herit=function(){
-	var f =function(){}
-	f.prototype=x
-	return;
-}
-var a={a1:1,a2:2};
-var b=herit(a)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	-->
+ <script src="js/js.js"></script>
