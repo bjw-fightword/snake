@@ -53,7 +53,7 @@ $(function(){
 		}else{
 			var weiba=snake.shift();
 			delete data[weiba.x+'_'+weiba.y];
-			$('#'+weiba.x+'_'+weiba.y).css({background:'#000'});
+			$('#'+weiba.x+'_'+weiba.y).css({background:'rgba(0,0,0,0.5)'});
 		}
 		snake.push(newTou);
 		data[newTou.x + '_' + newTou.y] = true;
