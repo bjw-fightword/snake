@@ -55,6 +55,9 @@ body{
     height: 15px;
     float: left;
   }
+  canvas{
+    display: none;
+  }
 } 
 .block{
   height: 29px;
